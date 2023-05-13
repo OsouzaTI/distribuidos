@@ -1,0 +1,26 @@
+Dados os testes realizados pelo programa, percebemos que:
+
+* Testes realizados em um: 
+    Windows 10 - Home
+    12th Gen (i5-12400F)
+    32gb RAM
+
+* Dados obtidos pelo pacote (psutil) dentro do WSL
+
+No primeiro teste realizado com 500 clientes enviando 100 mensagens
+inoperavelmente, o uso de memoria e processamento é baixíssimo, a media ficou entre 
+    CPU(%): 6.3
+    MEM(%): 5.7
+
+No segundo teste realizado com 800 clientes enviando 100 mensagens,
+o uso de memoria e processamento ficou entre
+    CPU(%): 8.9
+    MEM(%): 6.3
+
+No ultimo teste realizado, foram testados menos clientes e mensagens para termos uma 
+melhor disparidade, foram realizados testes com 100 clientes enviando 20 mensagens. Como esperado
+foram gastos menos recursos computacionais durante a execução
+    CPU(%): 3.8
+    MEM(%): 6.0
+
+Obs: Durante os testes, foram testados inúmeros tipos de mensagens com tamanhos diferentes
