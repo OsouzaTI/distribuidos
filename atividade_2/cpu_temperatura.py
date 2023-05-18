@@ -7,11 +7,11 @@ class CpuTemperatura:
     def __init__(self) -> None:        
         connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
         self.channel = connection.channel()
-        self.channel.queue_declare(queue='temperature')
+        self.channel.queue_declare(queue='temperatura')
 
     def ler_temperatura(self):
         temperature = psutil.sensors_temperatures()['coretemp'][0].current
-        self.channel.basic_publish(exchange='', routing_key='temperature', body=str(temperature))
+        self.channel.basic_publish(exchange='', routing_key='temperatura', body=str(temperature))
 
     def run(self):
         while True:
