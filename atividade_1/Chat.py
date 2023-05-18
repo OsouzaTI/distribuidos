@@ -2,7 +2,7 @@ import socket
 import settings
 import constants
 import uuid
-import json
+from criptografia import *
 import threading
 from ServerData import ServerData
 from ClientData import ClientData
@@ -19,6 +19,10 @@ class Chat:
         self.s.bind((settings.HOST, settings.PORT))
         # Define o limite máximo de conexões simultâneas
         self.s.listen(maxUsers)
+
+        # gerando chaves
+        generateKeys()
+        self.privateKey, self.publicKey = loadKeys()
 
         print(f'Servidor escutando na porta {settings.PORT}...')
 
@@ -41,7 +45,7 @@ class Chat:
                 # Aguarda uma mensagem do cliente
                 data = conn.recv(1024)
                 
-                clientData = ClientData.fromJson(data.decode())
+                clientData = ClientData.fromJson(data)
                 if clientData.type == constants.ClientMessageType.CONNECT:
                     print(str(clientData))
                     
@@ -57,15 +61,18 @@ class Chat:
                         len(self.users),
                         self.messages
                     )
-
-                    conn.sendall(str(serverData).encode())
+                    
+                    criptografado = rsa.encrypt(str(serverData).encode(), self.publicKey)
+                    conn.sendall(criptografado)
 
                 else:                
                     # for chave, valor in self.users.items():
                     #     print(chave, ":", valor)
                     usuario = self.users[f'{identificador}']
                     print(f'[{usuario}]: {clientData.message}')
-                    conn.sendall(str(ServerData.success()).encode())
+
+                    criptografado = rsa.encrypt(str(ServerData.success()).encode(), self.publicKey)
+                    conn.sendall(criptografado)
             except Exception as e: 
 
                 print(f'Erro: {e}')

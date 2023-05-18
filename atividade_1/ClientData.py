@@ -1,5 +1,6 @@
 import json
 import constants
+from criptografia import *
 
 class ClientData:
     
@@ -11,8 +12,14 @@ class ClientData:
     
     @staticmethod
     def fromJson(data):
+
+        # carrega as chaves publica e privada
+        privateKey, publicKey = loadKeys()
+        decripto_data = rsa.decrypt(data, privateKey).decode()
+        print('DECRIPTO: ' + decripto_data)
+        
         # Analisa o JSON em uma estrutura de dados Python
-        data = json.loads(data)
+        data = json.loads(decripto_data)
 
         # Inicializa uma nova instância da classe ClientData
         return ClientData(

@@ -4,6 +4,7 @@ import settings, constants
 from Chat import Chat
 from ClientData import ClientData
 from ServerData import ServerData
+from criptografia import *
 
 class User:
 
@@ -22,7 +23,7 @@ class User:
         self.s.connect((settings.HOST, settings.PORT))
 
         # conexao do cliente
-        self.send(str(ClientData(constants.ClientMessageType.CONNECT, self.nome, None, None)))
+        self.send(str(ClientData(constants.ClientMessageType.CONNECT, self.nome, None, None)).encode())
 
         # processo de mensgens
         self.mensage()
@@ -32,15 +33,21 @@ class User:
         # esperando mensagem
         while True:
             msg = input(f'[{self.nome}]: ')
-            self.send(str(ClientData(constants.ClientMessageType.DATA, self.nome, self.identifier, msg)))
+            self.send(str(ClientData(constants.ClientMessageType.DATA, self.nome, self.identifier, msg)).encode())
 
     def send(self, message):
+
+        # carrega as chaves publica e privada
+        privateKey, publicKey = loadKeys()
+        encripta = rsa.encrypt(message, publicKey)
+
         # Envia uma mensagem para o servidor
-        self.s.sendall(message.encode())
+        self.s.sendall(encripta)
+
         # esperando resposta do servidor
         resposta = self.s.recv(1024)
         
-        serverData = ServerData.fromJson(resposta.decode())
+        serverData = ServerData.fromJson(resposta)
         
         if self.identifier == None:
             self.identifier = serverData.identifier
